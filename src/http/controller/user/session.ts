@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
+import { PrismaUserRepository } from "repositories/user/prisma-user-repository";
 import { AuthenticateUseCase } from "use-cases/user/authenticate-use-case";
 import { z } from "zod";
 import id from "zod/v4/locales/id.cjs";
@@ -16,7 +17,8 @@ export async function sessionController(
   const { email, password } = sessionBodySchema.parse(req.body);
 
   try {
-    const authenticateUseCase = new AuthenticateUseCase();
+    const userRepository = new PrismaUserRepository();
+    const authenticateUseCase = new AuthenticateUseCase(userRepository);
     const { user } = await authenticateUseCase.execute({ email, password });
 
     const token = await res.jwtSign(
