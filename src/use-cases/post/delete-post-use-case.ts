@@ -1,6 +1,7 @@
 import { hash } from "bcryptjs";
 import { Post } from "generated/prisma";
 import { prisma } from "lib/prisma";
+import type { PostRepository } from "repositories/post/post-repository";
 
 interface DeletePostUseCaseInput {
   userId: string;
@@ -8,10 +9,9 @@ interface DeletePostUseCaseInput {
 }
 
 export class DeletePostUseCase {
+  constructor(private postRepository: PostRepository) {}
   async execute({ userId, postId }: DeletePostUseCaseInput): Promise<void> {
-    const existingPost = await prisma.post.findUnique({
-      where: { id: postId },
-    });
+    const existingPost = await this.postRepository.findById(postId);
 
     if (!existingPost) {
       throw new Error("Post not found");
@@ -19,12 +19,10 @@ export class DeletePostUseCase {
 
     if (existingPost.authorId !== userId) {
       throw new Error(
-        "You do not have permission to delete this post, you are not the author.",
+        "You do not have permission to delete this post, you are not the author."
       );
     }
-    await prisma.post.delete({
-      where: { id: postId },
-    });
+    await this.postRepository.delete(postId);
 
     return;
   }

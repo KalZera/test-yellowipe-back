@@ -53,7 +53,7 @@ export class PrismaPostRepository implements PostRepository {
 
     return post;
   }
-  async create(data: Prisma.PostCreateInput) {
+  async create(data: Prisma.PostUncheckedCreateInput) {
     const post = await prisma.post.create({
       data,
     });

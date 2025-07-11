@@ -1,6 +1,7 @@
 import { hash } from "bcryptjs";
 import { Post } from "generated/prisma";
 import { prisma } from "lib/prisma";
+import type { PostRepository } from "repositories/post/post-repository";
 
 interface UpdatePostUseCaseInput {
   userId: string;
@@ -13,14 +14,17 @@ interface UpdatePostUseCaseOutput {
 }
 
 export class UpdatePostUseCase {
+  constructor(private postRepository: PostRepository) {}
   async execute({
     userId,
     postId,
     content,
   }: UpdatePostUseCaseInput): Promise<UpdatePostUseCaseOutput> {
-    const existingPost = await prisma.post.findUnique({
-      where: { id: postId },
-    });
+    if (content.trim().length === 0) {
+      throw new Error("Content cannot be empty");
+    }
+
+    const existingPost = await this.postRepository.findById(postId);
 
     if (!existingPost) {
       throw new Error("Post not found");
@@ -31,13 +35,7 @@ export class UpdatePostUseCase {
         "You do not have permission to update this post, you are not the author."
       );
     }
-
-    const post = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        content,
-      },
-    });
+    const post = await this.postRepository.save({ ...existingPost, content });
 
     return {
       post,

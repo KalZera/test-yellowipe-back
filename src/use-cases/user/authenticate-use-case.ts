@@ -1,6 +1,6 @@
 import type { User } from "generated/prisma";
 import { compare } from "bcryptjs";
-import { prisma } from "lib/prisma";
+import type { UserRepository } from "repositories/user/user-repository";
 
 interface AuthenticateUseCaseRequest {
   email: string;
@@ -11,15 +11,12 @@ interface AuthenticateUseCaseResponse {
 }
 
 export class AuthenticateUseCase {
+  constructor(private userRepository: UserRepository) {}
   async execute({
     email,
     password,
   }: AuthenticateUseCaseRequest): Promise<AuthenticateUseCaseResponse> {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new Error("Invalid credentials");

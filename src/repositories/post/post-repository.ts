@@ -5,5 +5,5 @@ export interface PostRepository {
   fetchPosts(page: number, limit: number): Promise<Post[]>;
   delete(id: number): Promise<void>;
   save(post: Post): Promise<Post>;
-  create(data: Prisma.PostCreateInput): Promise<Post>;
+  create(data: Prisma.PostUncheckedCreateInput): Promise<Post>;
 }
