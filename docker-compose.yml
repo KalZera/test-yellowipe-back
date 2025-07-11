@@ -1,0 +1,15 @@
+name: test-yellow
+
+services:
+  db:
+    container_name: yellow-post-db
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user-feeds
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/pg:/data/postgres
