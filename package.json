@@ -4,7 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup src --out-dir dist",
+    "start": "node dist/server.js",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "setup": "npm run db:generate && npm run db:migrate"
   },
   "keywords": [],
   "author": "",
