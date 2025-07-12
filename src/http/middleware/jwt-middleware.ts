@@ -8,23 +8,24 @@ export async function verifyJWT(
 ) {
   try {
     await request.jwtVerify();
-
     const decoded = app.jwt.decode(
       (request.headers.authorization as string).replace("Bearer ", "")
     ) as DecodePayloadType;
     const now = Math.floor(Date.now() / 1000);
     const expiresIn = (decoded as { exp: number }).exp - now;
-    console.log("Token expires in:", expiresIn, "seconds");
-    if (expiresIn < 300) {
+    console.log("token expires in:", expiresIn, "seconds");
+    //verifica se falta duas horas para expirar( 60 + 60 * 2 = 2 horas)
+    if (expiresIn < 60 * 60 * 2) {
       const newToken = await reply.jwtSign({
         ...(decoded as object),
         iat: now,
-        exp: now + 1800, // 30 minutos a partir de agora
+        exp: 60 * 60 * 6 + now, // 6 horas a partir de agora
       });
 
       reply.header("x-new-token", newToken);
     }
   } catch (error) {
-    return reply.status(401).send({ message: "Unauthorized" });
+    console.log({ error });
+    return reply.status(401).send({ message: "Session Expired" });
   }
 }

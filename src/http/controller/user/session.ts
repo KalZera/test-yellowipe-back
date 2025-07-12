@@ -26,7 +26,7 @@ export async function sessionController(
       {
         sign: {
           sub: user.id,
-          expiresIn: "30m",
+          expiresIn: "6h",
         },
       }
     );

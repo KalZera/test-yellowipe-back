@@ -22,7 +22,8 @@ app.decorate(
 app.register(cors, {
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["x-new-token"],
+  credentials: true,
 });
 
 app.register(fastifyJwt, {
@@ -37,9 +38,7 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCookie);
-
 app.register(UserRoutes);
-
 app.register(PostRoutes);
 
 export default app;
