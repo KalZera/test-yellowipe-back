@@ -13,7 +13,6 @@ export async function verifyJWT(
     ) as DecodePayloadType;
     const now = Math.floor(Date.now() / 1000);
     const expiresIn = (decoded as { exp: number }).exp - now;
-    console.log("token expires in:", expiresIn, "seconds");
     //verifica se falta duas horas para expirar( 60 + 60 * 2 = 2 horas)
     if (expiresIn < 60 * 60 * 2) {
       const newToken = await reply.jwtSign({
@@ -25,7 +24,6 @@ export async function verifyJWT(
       reply.header("x-new-token", newToken);
     }
   } catch (error) {
-    console.log({ error });
     return reply.status(401).send({ message: "Session Expired" });
   }
 }
